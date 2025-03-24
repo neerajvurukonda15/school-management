@@ -2,6 +2,7 @@ package com.school.school_management.model;
 
 //package com.school.schoolmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class Subject {
     private String name;
 
     @ManyToMany(mappedBy = "subjects", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnore
     private List<Student> students = new ArrayList<>();
 
     // Constructors, Getters, and Setters

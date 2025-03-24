@@ -39,31 +39,46 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student saveStudent(Student student) {
+        // Ensure StudentProfile is linked correctly
         if (student.getStudentProfile() != null) {
             student.getStudentProfile().setStudent(student);
         }
 
+        // Handle Classroom logic (Insert New Classroom from JSON)
+        if (student.getClassroom() != null) {
+            Classroom classroom = student.getClassroom();
+
+            // If no ID is provided, insert a new classroom
+            if (classroom.getId() == null) {
+                classroom = classroomRepository.save(classroom);
+            }
+
+            student.setClassroom(classroom);
+            classroom.getStudents().add(student); //  Ensure bidirectional mapping
+        }
+
+        // Handle Subjects (Insert New Subjects from JSON)
         if (student.getSubjects() != null && !student.getSubjects().isEmpty()) {
-            List<Long> subjectIds = new ArrayList<>();
+            List<Subject> subjectList = new ArrayList<>();
 
             for (Subject subject : student.getSubjects()) {
-                if (subject.getId() != null) {
-                    subjectIds.add(subject.getId());
+                if (subject.getId() == null) {
+                    // If subject is new, save it
+                    subject = subjectRepository.save(subject);
+                } else {
+                    // If subject exists, fetch it
+                    subject = subjectRepository.findById(subject.getId()).orElse(subject);
                 }
+                subject.getStudents().add(student); //  Ensure bidirectional mapping
+                subjectList.add(subject);
             }
 
-            List<Subject> subjectList = subjectRepository.findAllById(subjectIds);
-
-            if (!subjectList.isEmpty()) {
-                for (Subject subject : subjectList) {
-                    subject.getStudents().add(student);
-                }
-                student.setSubjects(subjectList);
-            }
+            student.setSubjects(subjectList);
         }
 
         return studentRepository.save(student);
     }
+    
 
     @Override
     public void deleteStudent(Long id) {

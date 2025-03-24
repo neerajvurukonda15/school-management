@@ -33,6 +33,7 @@ public class Student {
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
+   // @JsonIgnore
     private List<Subject> subjects = new ArrayList<>();
 
 
