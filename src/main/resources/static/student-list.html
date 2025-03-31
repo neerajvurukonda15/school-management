@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get All Students</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #student-list { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<h2>All Students</h2>
+<button onclick="getAllStudents()">Fetch Students</button>
+<div id="student-list"></div>
+<br>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            alert("Unauthorized! Please log in.");
+            window.location.href = "login.html";
+        }
+    });
+
+    function getAllStudents() {
+        const token = localStorage.getItem("authToken");
+        fetch("http://localhost:8082/students", {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const studentList = document.getElementById("student-list");
+            studentList.innerHTML = ""; // Clear previous list
+            data.forEach(student => {
+                const studentItem = document.createElement("div");
+                studentItem.textContent = `${student.id}: ${student.name} (Age: ${student.age})`;
+                studentList.appendChild(studentItem);
+            });
+        })
+        .catch(error => alert("Error fetching students: " + error.message));
+    }
+</script>
+</body>
+</html>

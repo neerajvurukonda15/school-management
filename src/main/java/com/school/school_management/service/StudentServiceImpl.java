@@ -42,10 +42,33 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findById(id).orElse(null);
     }
 
+//    @Override
+//    public Student saveStudent(Student student) {
+//        return studentRepository.save(student);
+//    }
+
+
     @Override
     public Student saveStudent(Student student) {
+
+        Classroom classroom = classroomRepository.findByName(student.getClassroom().getName())
+                .orElseGet(() -> classroomRepository.save(student.getClassroom()));
+        student.setClassroom(classroom);
+
+
+        List<Subject> subjects = new ArrayList<>();
+        for (Subject subject : student.getSubjects()) {
+            Subject existingSubject = subjectRepository.findByName(subject.getName())
+                    .orElseGet(() -> subjectRepository.save(subject));
+            subjects.add(existingSubject);
+        }
+        student.setSubjects(subjects);
+
+        // Save Student with Relationships
         return studentRepository.save(student);
     }
+
+
 
     @Override
     public void deleteStudent(Long id) {
@@ -53,93 +76,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
 
-
-    //3 jsonproperties()
-//    @Override
-//    public Student saveStudent(Student student) {
-//        if (student.getStudentProfile() != null) {
-//            student.getStudentProfile().setStudent(student);
-//        }
-//
-//        // Handle Classroom
-//        if (student.getClassroom() != null) {
-//            Classroom classroom = student.getClassroom();
-//            if (classroom.getId() == null) {
-//                classroom = classroomRepository.save(classroom);
-//            }
-//            student.setClassroom(classroom);
-//            classroom.getStudents().add(student);
-//        }
-//
-//        // Handle Subjects
-//        if (student.getSubjects() != null && !student.getSubjects().isEmpty()) {
-//            List<Subject> subjectList = new ArrayList<>();
-//
-//            for (Subject subject : student.getSubjects()) {
-//                if (subject.getId() == null) {
-//                    subject = subjectRepository.save(subject);
-//                } else {
-//                    subject = subjectRepository.findById(subject.getId()).orElse(subject);
-//                }
-//
-//                // Ensure bidirectional mapping
-//                if (!subject.getStudents().contains(student)) {
-//                    subject.getStudents().add(student);
-//                }
-//
-//                subjectList.add(subject);
-//            }
-//
-//            student.setSubjects(subjectList);
-//        }
-//
-//        return studentRepository.save(student);
-//    }
-//
-//
-
-//2
-//    @Override
-//    public Student saveStudent(Student student) {
-//        // Ensure StudentProfile is linked correctly
-//        if (student.getStudentProfile() != null) {
-//            student.getStudentProfile().setStudent(student);
-//        }
-//
-//        // Handle Classroom logic (Insert New Classroom from JSON)
-//        if (student.getClassroom() != null) {
-//            Classroom classroom = student.getClassroom();
-//
-//            // If no ID is provided, insert a new classroom
-//            if (classroom.getId() == null) {
-//                classroom = classroomRepository.save(classroom);
-//            }
-//
-//            student.setClassroom(classroom);
-//            classroom.getStudents().add(student); //  Ensure bidirectional mapping
-//        }
-//
-//        // Handle Subjects (Insert New Subjects from JSON)
-//        if (student.getSubjects() != null && !student.getSubjects().isEmpty()) {
-//            List<Subject> subjectList = new ArrayList<>();
-//
-//            for (Subject subject : student.getSubjects()) {
-//                if (subject.getId() == null) {
-//                    // If subject is new, save it
-//                    subject = subjectRepository.save(subject);
-//                } else {
-//                    // If subject exists, fetch it
-//                    subject = subjectRepository.findById(subject.getId()).orElse(subject);
-//                }
-//                subject.getStudents().add(student); //  Ensure bidirectional mapping
-//                subjectList.add(subject);
-//            }
-//
-//            student.setSubjects(subjectList);
-//        }
-//
-//        return studentRepository.save(student);
-//    }
 
 
 }

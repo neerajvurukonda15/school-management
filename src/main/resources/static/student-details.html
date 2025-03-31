@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Student</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+    </style>
+</head>
+<body>
+<h2>Get Student by ID</h2>
+<label for="student-id">Student ID:</label>
+<input type="text" id="student-id">
+<button onclick="getStudentById()">Fetch Student</button>
+<div id="student-info"></div>
+<br>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            alert("Unauthorized! Please log in.");
+            window.location.href = "login.html";
+        }
+    });
+
+    function getStudentById() {
+        const token = localStorage.getItem("authToken");
+        const studentId = document.getElementById("student-id").value;
+
+        fetch(`http://localhost:8082/students/${studentId}`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch student");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const studentInfo = document.getElementById("student-info");
+            studentInfo.innerHTML = `<p><strong>Name:</strong> ${data.name}</p>
+                                   <p><strong>Age:</strong> ${data.age}</p>`;
+        })
+        .catch(error => alert("Error fetching student: " + error.message));
+    }
+</script>
+</body>
+</html>

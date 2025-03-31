@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Student</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { display: block; margin: 10px auto; padding: 10px; width: 80%; }
+    </style>
+</head>
+<body>
+<h2>Create Student</h2>
+<input type="text" id="student-name" placeholder="Name">
+<input type="number" id="student-age" placeholder="Age">
+<input type="text" id="student-address" placeholder="Address">
+<input type="text" id="student-phone" placeholder="Phone Number">
+<input type="text" id="student-class" placeholder="Class Name">
+<input type="text" id="student-grade" placeholder="Grade">
+<input type="text" id="student-subjects" placeholder="Subjects (comma separated)">
+<button onclick="createStudent()">Submit</button>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            alert("Unauthorized! Please log in.");
+            window.location.href = "index.html";
+        }
+    });
+
+    function createStudent() {
+        const token = localStorage.getItem("authToken");
+        const name = document.getElementById("student-name").value;
+        const age = document.getElementById("student-age").value;
+        const address = document.getElementById("student-address").value;
+        const phone = document.getElementById("student-phone").value;
+        const className = document.getElementById("student-class").value;
+        const grade = document.getElementById("student-grade").value;
+        const subjects = document.getElementById("student-subjects").value.split(",");
+
+        fetch("http://localhost:8082/students", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name,
+                age,
+                studentProfile: { address, phoneNumber: phone },
+                classroom: { name: className, gradeLevel: grade },
+                subjects: subjects.map(subject => ({ name: subject.trim() }))
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("Student Created Successfully!");
+            window.location.href = "dashboard.html";
+        })
+        .catch(error => alert("Error: " + error.message));
+    }
+</script>
+</body>
+</html>

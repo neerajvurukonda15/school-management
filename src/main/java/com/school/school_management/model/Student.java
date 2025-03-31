@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name = "students")
 public class Student {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,15 +18,15 @@ public class Student {
 
     private int age;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private StudentProfile studentProfile;
 
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL) // Prefer LAZY to avoid unnecessary queries
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "classroom_id")
     private Classroom classroom;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "student_subjects",
             joinColumns = @JoinColumn(name = "student_id"),

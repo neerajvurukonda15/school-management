@@ -15,7 +15,7 @@ public class StudentProfile {
     private String address;
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "studentProfile")
+    @OneToOne(mappedBy = "studentProfile", fetch = FetchType.LAZY)
     @JsonIgnore
     private Student student;
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Student</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label, input, button { display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<h2>Delete Student</h2>
+<label for="delete-student-id">Enter Student ID:</label>
+<input type="text" id="delete-student-id">
+<button onclick="deleteStudent()">Delete</button>
+<br>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            alert("Unauthorized! Please log in.");
+            window.location.href = "login.html";
+        }
+    });
+
+    function deleteStudent() {
+        const token = localStorage.getItem("authToken");
+        const studentId = document.getElementById("delete-student-id").value;
+
+        fetch(`http://localhost:8082/students/${studentId}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to delete student");
+            }
+            alert("Student Deleted Successfully");
+            window.location.reload();
+        })
+        .catch(error => alert("Error deleting student: " + error.message));
+    }
+</script>
+</body>
+</html>

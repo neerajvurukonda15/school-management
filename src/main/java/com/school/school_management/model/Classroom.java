@@ -18,7 +18,7 @@ public class Classroom {
     @Column(name="grade_level")
     private int gradeLevel;
 
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Student> students = new ArrayList<>();
 

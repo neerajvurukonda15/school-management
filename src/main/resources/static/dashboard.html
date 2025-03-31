@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+<h2>Dashboard</h2>
+<!-- Display the token from sessionStorage (if needed, copy manually) -->
+<p>Your token (copy and paste for CRUD operations):</p>
+<textarea id="token" readonly></textarea>
+<br>
+<button onclick="copyToken()">Copy Token</button>
+<br><br>
+
+<button onclick="window.location.href='/ui/students/all'">Get All Students</button>
+<button onclick="window.location.href='/ui/students/create'">Create Student</button>
+<button onclick="window.location.href='/ui/students/get-by-id'">Get Student by ID</button>
+<button onclick="window.location.href='/ui/students/delete'">Delete Student</button>
+<br><br>
+<button onclick="logout()">Logout</button>
+
+<script>
+  // Display token from sessionStorage in textarea
+  const token = sessionStorage.getItem("authToken");
+  document.getElementById("token").value = token ? token : "No token found";
+
+  function copyToken() {
+      const tokenText = document.getElementById("token");
+      tokenText.select();
+      document.execCommand("copy");
+      alert("Token copied!");
+  }
+
+  function logout() {
+      sessionStorage.removeItem("authToken");
+      window.location.href = "/ui/auth/login";
+  }
+</script>
+</body>
+</html>
